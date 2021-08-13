@@ -1,8 +1,6 @@
-import { constant } from "lodash";
-
 // App_Init
 export const APP_INIT = "APP_INIT";
-export const APP_TITLE = "NMB Covid19 command center";
+export const APP_TITLE = "MIC_JobProgressive";
 
 // home img
 export const HTTP_HOMEIMG_FETCHING = "HTTP_HOMEIMG_FETCHING";
@@ -15,6 +13,10 @@ export const HTTP_LOGIN_FETCHING = "HTTP_LOGIN_FETCHING";
 export const HTTP_LOGIN_SUCCESS = "HTTP_LOGIN_SUCCESS";
 export const HTTP_LOGIN_FAILED = "HTTP_LOGIN_FAILED";
 
+// modal
+export const modal_on = "modal_on";
+export const modal_off = "modal_off";
+
 // Register Page
 export const HTTP_REGISTER_FETCHING = "HTTP_REGISTER_FETCHING";
 export const HTTP_REGISTER_SUCCESS = "HTTP_REGISTER_SUCCESS";
@@ -26,24 +28,9 @@ export const HTTP_DIVCODE_SUCCESS = "HTTP_DIVCODE_SUCCESS";
 export const HTTP_DIVCODE_FAILED = "HTTP_DIVCODE_FAILED";
 
 // Break area
-export const HTTP_BREAKAREA_FETCHING = "HTTP_BREAKAREA_FETCHING";
-export const HTTP_BREAKAREA_SUCCESS = "HTTP_BREAKAREA_SUCCESS";
-export const HTTP_BREAKAREA_FAILED = "HTTP_BREAKAREA_FAILED";
-
-// Break type
-export const HTTP_BREAKTYPE_FETCHING = "HTTP_BREAKTYPE_FETCHING";
-export const HTTP_BREAKTYPE_SUCCESS = "HTTP_BREAKTYPE_SUCCESS";
-export const HTTP_BREAKTYPE_FAILED = "HTTP_BREAKTYPE_FAILED";
-
-// Alert mail
-export const HTTP_ALERTMAIL_FETCHING = "HTTP_ALERTMAIL_FETCHING";
-export const HTTP_ALERTMAIL_SUCCESS = "HTTP_ALERTMAIL_SUCCESS";
-export const HTTP_ALERTMAIL_FAILED = "HTTP_ALERTMAIL_FAILED";
-
-// Emp_tracking_bus
-export const HTTP_TRACKBUS_FETCHING = "HTTP_TRACKBUS_FETCHING";
-export const HTTP_TRACKBUS_SUCCESS = "HTTP_TRACKBUS_SUCCESS";
-export const HTTP_TRACKBUS_FAILED = "HTTP_TRACKBUS_FAILED";
+export const HTTP_MIC_JOBS_FETCHING = "HTTP_MIC_JOBS_FETCHING";
+export const HTTP_MIC_JOBS_SUCCESS = "HTTP_MIC_JOBS_SUCCESS";
+export const HTTP_MIC_JOBS_FAILED = "HTTP_MIC_JOBS_FAILED";
 
 // Error Code
 export const E_PICKER_CANCELLED = "E_PICKER_CANCELLED";
@@ -65,8 +52,9 @@ export const NETWORK_TIMEOUT_MESSAGE =
 export const UPLOAD_PHOTO_FAIL_MESSAGE =
   "An error has occurred. The photo was unable to upload.";
 
-export const apiUrl = "http://54.255.187.109:2009/api/v1/";
-export const imageUrl = "http://54.255.187.109:2009/";
+// export const apiUrl = "http://10.121.1.123:9001/api/mic_jobProgressive/";
+export const apiUrl = "http://localhost:9001/api/mic_jobProgressive/";
+
 
 export const YES = "YES";
 export const NO = "NO";
@@ -75,34 +63,21 @@ export const NOK = "nok";
 
 export const server = {
   LOGIN_URL: `authen/login`,
-  REGISTER_URL: `manage_user/register`,
+  REGISTER_URL: `authen/register`,
+  FORGOT_PASSWORD_URL: `authen/forgot`,
   USER_URL: `manage_user/user`,
-  VERIFY_EMAIL_URL: `manage_user/verifyEmail`,
+  CHANGE_LV_URL:'manage_user/changeLevel',
+  FIND_USER_URL: 'manage_user/find_user',
+  VERIFY_EMAIL_URL: `authen/verifyEmail`,
   DIVISIONCODE_URL: `manage_master/division`,
-  GROUP_PLANT_URL: `qr_covid19/GroupPlant`,
-  EMP_TRACK_BUS_URL: `qr_covid19/empTrackBus`,
-  EMP_TRACK_BREAK_URL: `qr_covid19/empTrackBreak`,
-  BREAK_AREA_URL: `master_covid19/break_area`,
-  BREAK_TYPE_URL: `master_covid19/break_type`,
-  CHECK_IN_REPORT_URL: `qr_covid19/TotalCheckIn`,
-  BUS_CHECK_IN_REPORT_URL: `qr_covid19/busCheckIn`,
-  BREAK_CHECK_IN_REPORT_URL: `qr_covid19/breakCheckIn`,
-  WEB_REGISTER_URL: `qr_covid19/WebRegister`,
-  BODY_TEMP_URL: `body_temperature/body_temperature`,
-  ALERT_MAIL_URL: `master_covid19/alert_mail`,
-  TRACK_BUS_PLATE_URL: `qr_covid19/TrackBusPlate`,
-  PERCENT_REGISTER_PLANT_URL: `qr_covid19/PercentRegisterByPlant`,
-  PERCENT_REGISTER_DIVISION_URL: `qr_covid19/PercentRegisterByDivision`,
-  TOTAL_MAN_COUNT_URL: `body_temperature/emp_count`,
-  BODY_TEMP_EX_URL: `body_temperature/body_temperature_ex`,
-  BODY_TEMP_MISSING_EX_URL: `body_temperature/body_temperature_missing_ex`,
-  BODY_TEMP_OVER_EX_URL: `body_temperature/body_temperature_over_ex`,
-  ALL_MANPOWER_URL:`body_temperature/all_manpower_ex`,
-  BUS_CHECK_IN_PERCENTAGE_URL: `qr_covid19/BusCheckInPercent`,
-  BREAK_CHECK_IN_PERCENTAGE_URL: `qr_covid19/BreakCheckInPercent`,
-  CHECK_IN_PERCENTAGE_URL: `qr_covid19/CheckInPercent`,
-  HOME_IMAGE_URL: `home_image/home_image`,
-  NO_SCAN_REPORT_URL: `qr_covid19/noScanReport`
+  DIVISIONNAME_URL: `manage_master/divisionName`,
+  MIC_JOB_URL: 'Jobs/mic_job',
+  MIC_JOB_APPROVED_URL: 'Jobs/mic_job_approve',
+  P_CHART_URL:'qc_control_chart/dynamic_pchart',
+  JOB_PROCESS_URL:'manage_master/jobs_process_master',
+  JOB_SCORE_URL:'Jobs/job_score',
+  JOB_PROGRESSIVE_URL:'JobProgressive/jobProgressive',
+  AllianceWebsite_URL: 'alliance_website/allianceWebsite',
 };
 
 export const key = {
@@ -112,4 +87,5 @@ export const key = {
   USER_NAME: "USER_NAME",
   USER_EMP: "USER_EMP",
   TEMP_EMP: "TEMP_EMP",
+  TOKEN: "TOKEN",
 };

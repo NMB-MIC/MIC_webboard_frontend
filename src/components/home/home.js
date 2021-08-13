@@ -1,52 +1,55 @@
 import React, { Component } from "react";
 import { Animated } from "react-animated-css";
-import { key, YES, server } from "../../constants/index";
+import { key, YES, server, OK } from "../../constants/index";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "react-slideshow-image/dist/styles.css";
 import { Zoom } from "react-slideshow-image";
 import { connect } from "react-redux";
-import { httpClient } from "../../utils/HttpClient";
+import { httpClient } from '../../utils/HttpClient'
+import ReactTooltip from 'react-tooltip';
+import Swal from "sweetalert2";
+import _ from "lodash";
 
 class home extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: null,
-      imgData: null,
+      countOnGoing: 0,
+      countSuccess: 0,
+      countOpen: 0,
+      allianceWebsiteList: [],
     };
   }
 
   componentDidMount() {
-    this.getCovidData();
-    this.isMember();
     window.scrollTo(0, 0);
-    // this.getHomeImg();
+    // console.log(localStorage.getItem(key.TOKEN));
+    this.doLoadJob()
+    this.doGetAllianceWebsite()
   }
 
-  getHomeImg = async () => {
-    if (this.state.imgData == null) {
-      let result = await httpClient.get(server.HOME_IMAGE_URL);
-      this.setState({ imgData: result.data.result });
-    }
-  };
+  doLoadJob = async () => {
+    let response = await httpClient.get(server.MIC_JOB_URL + '_group_status')
+    console.log(response.data.result);
+    response.data.result.forEach(item => {
+      switch (item.jobStatus) {
+        case 'open':
+          this.setState({ countOpen: item.JobCount })
+          break;
+        case 'success':
+          this.setState({ countSuccess: item.JobCount })
+          break;
+        case 'onGoing':
+          this.setState({ countOnGoing: item.JobCount })
+          break;
 
-  getCovidData = async () => {
-    let resultCovidAPI = await axios.get(
-      "https://covid19.th-stat.com/api/open/today"
-    );
-
-    if (resultCovidAPI != null) {
-      this.setState({ data: resultCovidAPI.data });
-    }
-  };
-
-  dataConfirmed = () => {
-    if (this.state.data != null) {
-      return this.state.data.Confirmed;
-    }
-  };
+        default:
+          break;
+      }
+    });
+  }
 
   isMember = () => {
     if (localStorage.getItem(key.LOGIN_PASSED) === YES) {
@@ -56,268 +59,284 @@ class home extends Component {
     }
   };
 
-  bufferToBase64 = (fileData, fileType) => {
-    var binary = "";
-    var bytes = new Uint8Array(fileData);
-    var len = bytes.byteLength;
-    for (var i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
+  isPermissionToUpdateJob = () => {
+    if (localStorage.getItem(key.USER_LV) === 'MIC_Head' ||
+      localStorage.getItem(key.USER_LV) === 'MIC_Member' ||
+      localStorage.getItem(key.USER_LV) === 'admin') {
+      return true
+    } else {
+      return false
     }
-    return "data:" + fileType + ";base64," + window.btoa(binary);
-  };
+  }
 
-  Slideshow = () => {
-    if (this.state.imgData != null) {
-      var images = [];
-      this.state.imgData.map((item) => {
-        images.push(this.bufferToBase64(item.fileData.data, item.fileType));
-      });
-      const zoomInProperties = {
-        indicators: true,
-        scale: 1.5,
-      };
+  renderAllianceWebsite = () => {
+    const randomType = () => {
+      const randomList = ['warning', 'danger', 'success', 'primary']
+      return _.sample(randomList)
+    }
 
-      return (
-        <div
-          style={{
-            maxWidth: 300,
-            display: "block",
-            marginRight: "auto",
-            marginLeft: "auto",
-          }}
-        >
-          <Zoom {...zoomInProperties}>
-            {images.map((each, index) => (
-              <div key={index} style={{ width: "100%" }}>
-                <img
-                  style={{
-                    objectFit: "fill",
-                    width: "100%",
-                  }}
-                  src={each}
-                />
+    const allianceWebsiteConsole = (item) => {
+      if (this.isPermissionToUpdateJob) {
+        return (
+          <div className="card-tools">
+            <button type="button" className="btn btn-tool" onClick={(e) => {
+              e.preventDefault()
+              this.doRemoveAllianceWebsite(item.websiteName)
+            }}>
+              <i className="fas fa-trash-alt" />
+            </button>
+            <button type="button" className="btn btn-tool" onClick={(e) => {
+              e.preventDefault()
+              this.doEditAllianceWebsite(item.websiteName)
+            }}>
+              <i className="fas fa-edit" />
+            </button>
+          </div>
+        )
+      }
+    }
+
+    const renderAllianceWebsiteItem = () => {
+      if (this.state.allianceWebsiteList.length > 0) {
+        return this.state.allianceWebsiteList.map((item) => (
+          <div className="col-4">
+            <div className={"card card-" + randomType()}>
+              <div className="card-header">
+                {allianceWebsiteConsole(item)}
+                {/* /.card-tools */}
               </div>
-            ))}
-          </Zoom>
-        </div>
-      );
+              {/* /.card-header */}
+              <div className="card-body">
+                <h3 data-for={'ReactTooltip' + item.websiteName} data-tip={'ReactTooltip' + item.websiteName}>{item.websiteName}</h3>
+                <p>{item.websiteDiscription}</p>
+                <a className='' href={item.websiteLink} target="_blank">{item.websiteLink}</a>
+                <ReactTooltip id={'ReactTooltip' + item.websiteName} type='light' clickable={true}>
+                  <iframe width="200%" height="500" src={item.websiteLink} title="W3Schools Free Online Web Tutorials" />
+                </ReactTooltip>
+              </div>
+              {/* /.card-body */}
+            </div>
+          </div>
+        ))
+      }
     }
-  };
+
+    return (
+      <div className="container-fluid h-100">
+        <div className="card card-row card-primary">
+          <div className="card-header">
+            <h3 className="card-title">
+              Alliance website
+            </h3>
+            {this.isPermissionToUpdateJob && <button onClick={(e) => {
+              e.preventDefault()
+              this.doCreateAllianceWebsite()
+            }} className='btn btn-default btn-sm float-right'><b>Add web</b></button>}
+          </div>
+          <div className="card-body">
+            <div className="row">
+              {renderAllianceWebsiteItem()}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    )
+  }
+
+  doCreateAllianceWebsite = () => {
+    Swal.mixin({
+      input: 'text',
+      confirmButtonText: 'Next &rarr;',
+      showCancelButton: true,
+      progressSteps: ['1', '2', '3']
+    }).queue([
+      {
+        title: 'Create alliance website (1)',
+        text: 'Enter website name (Not web address)'
+      },
+      {
+        title: 'Create alliance website (2)',
+        input: 'url',
+        text: 'Enter website address (Ex. http://10.121.1.123:8000/)'
+      },
+      {
+        title: 'Create alliance website (3)',
+        text: 'Enter website description'
+      },
+    ]).then(async (result) => {
+      if (result.value) {
+        const data = {
+          websiteName: result.value[0],
+          websiteLink: result.value[1],
+          websiteDiscription: result.value[2],
+        }
+        let response = await httpClient.post(server.AllianceWebsite_URL, data)
+        if (response.data.api_result === OK) {
+          this.doGetAllianceWebsite()
+          Swal.fire('Yeah!',
+            'Add alliance website completed.',
+            'success')
+        } else {
+          Swal.fire('Error!',
+            'Add alliance website failed!',
+            'error')
+        }
+      }
+    })
+  }
+
+  doRemoveAllianceWebsite = (websiteName) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        let response = await httpClient.delete(server.AllianceWebsite_URL, { data: { websiteName } })
+        if (response.data.api_result === OK) {
+          this.doGetAllianceWebsite()
+          Swal.fire(
+            'Deleted!',
+            'Your file has been deleted.',
+            'success'
+          )
+        } else {
+          Swal.fire(
+            'Error!',
+            'Something wrong!!!',
+            'error'
+          )
+        }
+
+      }
+    })
+  }
+
+  doEditAllianceWebsite = () => {
+    Swal.fire('do not finish yet', 'รอแปป', 'info')
+  }
+
+  doGetAllianceWebsite = async () => {
+    let response = await httpClient.get(server.AllianceWebsite_URL)
+    if (response.data.api_result === OK) {
+      this.setState({ allianceWebsiteList: response.data.result })
+      // console.log(response.data.result);
+    }
+  }
 
   render() {
     return (
-      <div className="content-wrapper" id="wrapper">
+      <div className="content-wrapper kanban" id="wrapper">
         <div class="col-sm-12" style={{ textAlign: "center" }}>
           <Animated animationIn="slideInDown">
             <h1>
-              สถานการณ์ Covid 19<small> ในประเทศไทย</small>
+              MIC<small> Job progressive</small>
             </h1>
           </Animated>
           <div className="content-header">
             <div className="container-fluid">
               <div className="row mb-2">
                 <div className="col-sm-6" style={{ textAlign: "left" }}>
-                  <Link to="/temperature_record">
-                    <span
-                      className="iconify"
-                      data-icon="fa-solid:temperature-high"
-                    />{" "}
-                    record body temperature
-                  </Link>
+
                 </div>
                 {/* /.col */}
-                <div className="col-sm-6">
-                  <ol className="breadcrumb float-sm-right">
-                    <li className="breadcrumb-item active">
-                      Last update :{" "}
-                      {this.state.data != null &&
-                        // moment
-                        //   .utc(this.state.data.UpdateDate)
-                        //   .format("DD-MMM-YYYY hh:mm")
-                        this.state.data.UpdateDate}
-                    </li>
-                  </ol>
-                </div>
+
                 {/* /.col */}
               </div>
               {/* /.row */}
             </div>
             {/* /.container-fluid */}
           </div>
-          <div className="content">
+          <div className="content pb-3">
             {/* <div className="card">{this.Slideshow()}</div> */}
             <div className="container-fluid">
-              <div className="row mb-2">
-                <div className="col-12 col-sm-6 col-md-3">
-                  <div className="info-box">
-                    <span className="info-box-icon bg-danger elevation-1">
-                      <span
-                        className="iconify"
-                        data-icon="fa-solid:disease"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">ผู้ป่วยยืนยันสะสม</span>
-                      <span className="info-box-number">
-                        {this.state.data != null && this.state.data.Confirmed}
-                        <small> ราย</small>
-                      </span>
-                    </div>
-                    {/* /.info-box-content */}
+              <div className="row">
+                <div class='col-lg-4'>
+                  <div style={{ textAlign: 'center' }}>
+                    <Link to={'/mic_jobs/jobs_request'}>
+                      <img style={{ height: 120 }} src='/images/RequestNewJob.png' />
+                    </Link>
                   </div>
-                  {/* /.info-box */}
-                </div>
-                {/* /.col */}
-                <div className="col-12 col-sm-6 col-md-3">
-                  <div className="info-box mb-3">
-                    <span className="info-box-icon bg-success elevation-1">
-                      <span
-                        className="iconify"
-                        data-icon="medical-icon:health-services"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">รักษาหายแล้วสะสม</span>
-                      <span className="info-box-number">
-                        {this.state.data != null && this.state.data.Recovered}
-                        <small> ราย</small>
-                      </span>
+                  <div className="card card-primary">
+                    <div class="card-header border-0">
+                      <Link to={'/mic_jobs/jobs_request'}>
+                        <div class="d-flex justify-content-between">
+                          <h3 class="card-title">Jobs request</h3>
+                        </div>
+                      </Link>
                     </div>
-                    {/* /.info-box-content */}
-                  </div>
-                  {/* /.info-box */}
-                </div>
-                {/* /.col */}
-                {/* fix for small devices only */}
-                <div className="clearfix hidden-md-up" />
-                <div className="col-12 col-sm-6 col-md-3">
-                  <div className="info-box mb-3">
-                    <span className="info-box-icon bg-warning elevation-1">
-                      <span
-                        className="iconify"
-                        data-icon="mdi:hospital-marker"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">กำลังรักษา</span>
-                      <span className="info-box-number">
-                        {this.state.data != null &&
-                          this.state.data.Hospitalized}
-                        <small> ราย</small>
-                      </span>
+                    <div className="card-body">
+                      <div style={{ textAlign: 'left', }}>
+                        <p>Request MIC team to help or consault your job/project.</p>
+                        <p >
+                          <Link to={'/mic_jobs/jobs_request'}>
+                            {`See more ${this.state.countOpen} items ...`}
+                          </Link>
+                        </p>
+                      </div>
                     </div>
-                    {/* /.info-box-content */}
-                  </div>
-                  {/* /.info-box */}
-                </div>
-                {/* /.col */}
-                <div className="col-12 col-sm-6 col-md-3">
-                  <div className="info-box mb-3">
-                    <span className="info-box-icon bg-secondary elevation-1">
-                      <span
-                        className="iconify"
-                        data-icon="fa-solid:book-dead"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">เสียชีวิตสะสม</span>
-                      <span className="info-box-number">
-                        {this.state.data != null && this.state.data.Deaths}
-                        <small> ราย</small>
-                      </span>
-                    </div>
-                    {/* /.info-box-content */}
-                  </div>
-                  {/* /.info-box */}
-                </div>
-
-                <div className="col-md-3">
-                  <div className="info-box mb-3 bg-danger">
-                    <span className="info-box-icon">
-                      <span
-                        className="iconify"
-                        data-icon="medical-icon:infectious-diseases"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">ผู้ป่วยใหม่</span>
-                      <span className="info-box-number">
-                        {this.state.data != null &&
-                          this.state.data.NewConfirmed}
-                        <small> ราย</small>
-                      </span>
-                    </div>
-                    {/* /.info-box-content */}
                   </div>
                 </div>
-                <div className="col-md-3">
-                  <div className="info-box mb-3 bg-success">
-                    <span className="info-box-icon">
-                      <span
-                        className="iconify"
-                        data-icon="mdi:hospital-box-outline"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">รักษาหาย</span>
-                      <span className="info-box-number">
-                        {this.state.data != null &&
-                          this.state.data.NewRecovered}
-                        <small> ราย</small>
-                      </span>
+                <div class='col-lg-4'>
+                  <div style={{ textAlign: 'center' }}>
+                    <Link to={'/mic_jobs/jobs_progressive'}>
+                      <img style={{ height: 120 }} src='/images/OnGoingJob.png' />
+                    </Link>
+                  </div>
+                  <div className="card card-primary">
+                    <div className="card-header border-0" >
+                      <Link to={'/mic_jobs/jobs_progressive'}>
+                        <div class="d-flex justify-content-between">
+                          <h3 class="card-title">Jobs progressive</h3>
+                        </div>
+                      </Link>
                     </div>
-                    {/* /.info-box-content */}
+                    <div className="card-body">
+                      <div style={{ textAlign: 'left', }}>
+                        <p>On going job/project that MIC team handle.</p>
+                        <p >
+                          <Link to={'/mic_jobs/jobs_progressive'}>
+                            {`See more ${this.state.countOnGoing} items ...`}
+                          </Link>
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="col-md-3">
-                  <div className="info-box mb-3 bg-warning">
-                    <span className="info-box-icon">
-                      <span
-                        className="iconify"
-                        data-icon="fa-solid:hospital-user"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">เข้ารับการรักษา</span>
-                      <span className="info-box-number">
-                        {this.state.data != null &&
-                          this.state.data.NewHospitalized}
-                        <small> ราย</small>
-                      </span>
+                <div class='col-lg-4'>
+                  <div style={{ textAlign: 'center' }}>
+                    <Link to={'/mic_jobs/success_story'}>
+                      <img style={{ height: 120 }} src='/images/SuccessStory.png' />
+                    </Link>
+                  </div>
+                  <div className="card card-primary">
+                    <div class="card-header border-0">
+                      <Link to={'/mic_jobs/success_story'}>
+                        <div class="d-flex justify-content-between">
+                          <h3 class="card-title">Success story</h3>
+                        </div>
+                      </Link>
                     </div>
-                    {/* /.info-box-content */}
+                    <div className="card-body">
+                      <div style={{ textAlign: 'left', }}>
+                        <p>Show success job/project.</p>
+                        <p >
+                          <Link to={'/mic_jobs/success_story'}>
+                            {`See more ${this.state.countSuccess} items ...`}
+                          </Link>
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="col-md-3">
-                  <div className="info-box mb-3 bg-secondary">
-                    <span className="info-box-icon">
-                      <span
-                        className="iconify"
-                        data-icon="mdi:emoticon-dead"
-                        data-inline="false"
-                      />
-                    </span>
-                    <div className="info-box-content">
-                      <span className="info-box-text">เสียชีวิต</span>
-                      <span className="info-box-number">
-                        {this.state.data != null && this.state.data.NewDeaths}
-                        <small> ราย</small>
-                      </span>
-                    </div>
-                    {/* /.info-box-content */}
-                  </div>
-                </div>
-
-                {/* /.col */}
               </div>
             </div>
+            {this.renderAllianceWebsite()}
           </div>
           {/* Info */}
         </div>

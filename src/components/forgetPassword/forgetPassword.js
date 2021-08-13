@@ -38,7 +38,7 @@ class ForgetPassword extends Component {
     }
 
     try {
-      let resultBackend = await httpClient.patch(server.USER_URL, {
+      let resultBackend = await httpClient.patch(server.FORGOT_PASSWORD_URL, {
         email: this.state.email,
       });
       if (resultBackend.data.api_result === OK) {

@@ -101,7 +101,7 @@ class Login extends Component {
                     <button
                       onClick={(e) => {
                         e.preventDefault();
-                        e.target.disabled = true;
+                        // e.target.disabled = true;
                         this.props.login(this.props.history, this.state);
                       }}
                       type="submit"
@@ -128,9 +128,9 @@ class Login extends Component {
                 </div>
                 {/* /.col */}
               </div>
-              {/* <p class="mb-1" style={{ marginTop: 10 }}>
+              <p class="mb-1" style={{ marginTop: 10 }}>
                 <Link to="/forgotPassword">I forgot my password</Link>
-              </p> */}
+              </p>
             </div>
             {/* /.login-card-body */}
           </div>

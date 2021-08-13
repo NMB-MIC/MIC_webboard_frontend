@@ -75,7 +75,7 @@ export const register = (history, credential) => {
           server.REGISTER_URL,
           credential
         );
-        if (resultBackend.data.message === OK) {
+        if (resultBackend.data.api_result === OK) {
           dispatch(setRegisterStateToSuccess(resultBackend.data.result));
           MySwal.fire({
             icon: "success",

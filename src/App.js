@@ -1,35 +1,29 @@
-import Header from "./components/Header/Header";
-import Menu from "./components/Menu/Menu";
-import Footer from "./components/Footer/Footer";
+import Header from "./components/webStructure/Header";
+import Menu from "./components/webStructure/Menu";
+import Footer from "./components/webStructure/Footer/Footer";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import verifyEmail from "./components/verifyEmail/verifyEmail";
 import forgetPassword from './components/forgetPassword/forgetPassword';
+import changePassword from './components/changePassword'
 
 import home from "./components/home/home";
+
+//manage master
 import manage_divisionCode from "./components/manageMaster/divisionCode/divisionCode";
 import create_divisionCode from "./components/manageMaster/create-divisionCode/create-divisionCode";
+import user_manage from './components/manageMaster/userManage'
+import jobProcessMaster from './components/manageMaster/jobProcessMaster'
 
-import manage_breakArea from "./components/manageMaster/breakArea/breakArea";
-import create_breakArea from "./components/manageMaster/create-breakArea/create-breakArea";
+//MIC Jobs
+import jobs_progressive from './components/mic_jobs/jobs_progressive'
+import jobs_request from './components/mic_jobs/jobs_request'
+import success_story from './components/mic_jobs/success_story'
+import jobs_detail from './components/mic_jobs/jobs_detail'
+import editJobDetail from './components/mic_jobs/editJobDetail';
 
-import manage_AlertMail from "./components/manageMaster/alert-mail/alert-mail";
-import create_AlertEmail from "./components/manageMaster/create-alertEmail/create-alertEmail";
-
-import report_empTrackBus from "./components/Report/empTrackBus/empTrackBus";
-import track_AreaBus from "./components/Report/trackPlateBus/trackPlateBus";
-
-import homeImage from "./components/manageMaster/home-image/home-image";
-
-import report_empTrackBreak from "./components/Report/empTrackBreak/empTrackBreak";
-import report_checkIn from "./components/Report/CheckIn/CheckIn";
-import Report_register from "./components/Report/register/register";
-import report_temperature from "./components/Report/temperature/temperature";
-import report_chekInPercentage from "./components/Report/CheckInPercentage/CheckInPercentage";
-import report_trackInfected from './components/Report/trackInfected/trackInfected';
-import report_noScanQR from './components/Report/noScanQR/noScanQR';
-
-import temperature_record from "./components/temperatureRecord/temperatureRecord";
+//qc tools
+import p_chart from './components/qc_tools/p_chart'
 
 import { APP_TITLE } from "./constants/index";
 
@@ -50,8 +44,9 @@ const isLoggedIn = () => {
 
 const isPowerUser = () => {
   if (
-    localStorage.getItem(key.USER_LV) === "power" ||
-    localStorage.getItem(key.USER_LV) === "admin"
+    localStorage.getItem(key.USER_LV) === "MIC_Member" ||
+    localStorage.getItem(key.USER_LV) === "admin" ||
+    localStorage.getItem(key.USER_LV) === "MIC_head"
   ) {
     return true;
   } else {
@@ -108,15 +103,16 @@ class App extends Component {
           {isLoggedIn() && <Menu />}
           <Switch>
             <Route
-              path="/verifyEmail/:username/:randomKey"
+              path="/verifyEmail/:username/:registerKey"
               component={verifyEmail}
             />
             <Route path="/login" component={Login} />
-            <Route path="/temperature_record" component={temperature_record} />
             <Route path="/register" component={Register} />
             <Route path="/home" component={home} />
             <Route path="/forgotPassword" component={forgetPassword} />
+            <SecuredRoute path='/changePassword' component={changePassword} />
 
+            {/* manageMaster */}
             <SecuredLVRoute
               path="/master/divisionCode"
               component={manage_divisionCode}
@@ -126,58 +122,39 @@ class App extends Component {
               component={create_divisionCode}
             />
             <SecuredLVRoute
-              path="/master/breakArea"
-              component={manage_breakArea}
+              path="/master/userManage"
+              component={user_manage}
             />
             <SecuredLVRoute
-              path="/master/Create/breakArea"
-              component={create_breakArea}
-            />
-            <SecuredLVRoute
-              path="/master/AlertMail"
-              component={manage_AlertMail}
-            />
-            <SecuredLVRoute
-              path="/master/Create/AlertMail/"
-              component={create_AlertEmail}
-            />
-            <SecuredLVRoute
-              path="/master/homeImageSlide"
-              component={homeImage}
-            />
+              path='/master/jobProcessMaster'
+              component={jobProcessMaster} />
 
-            <SecuredRoute
-              path="/Report/EmpTrackBus"
-              component={report_empTrackBus}
+            {/* mic Jobs */}
+            < SecuredRoute
+              path="/mic_jobs/jobs_request"
+              component={jobs_request}
             />
             <SecuredRoute
-              path="/track_PlateBus/:Plate&:Update"
-              component={track_AreaBus}
+              path="/mic_jobs/jobs_progressive"
+              component={jobs_progressive}
             />
             <SecuredRoute
-              path="/Report/EmpTrackBreak"
-              component={report_empTrackBreak}
+              path="/mic_jobs/success_story"
+              component={success_story}
             />
+            <Route
+              path="/mic_jobs/job_detail/:job_id"
+              component={jobs_detail}
+            />
+            <SecuredRoute path="/mic_jobs/edit_job_detail/:job_id"
+              component={editJobDetail} />
 
-            <SecuredLVRoute
-              path="/Report/Temperature"
-              component={report_temperature}
-            />
-            <SecuredRoute
-              path="/Report/checkInPercentage"
-              component={report_chekInPercentage}
-            />
-            <SecuredRoute
-              path="/Report/trackInfected"
-              component={report_trackInfected}
-            />
-            <SecuredRoute
-              path="/Report/reportNoScanQR"
-              component={report_noScanQR}
-            />
 
-            <SecuredRoute path="/Report/CheckIn" component={report_checkIn} />
-            <SecuredRoute path="/Report/register" component={Report_register} />
+            {/* qc tools */}
+            <SecuredRoute
+              path="/qc_tools/p_chart/"
+              component={p_chart}
+            />
 
             <Route exact={true} path="/" component={this.redirectToLogin} />
             <Route exact={true} path="*" component={this.redirectToLogin} />

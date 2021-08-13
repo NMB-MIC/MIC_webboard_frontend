@@ -6,7 +6,7 @@ const initialState = {
   isError: false,
   errorMessage:null,
 };
-
+ 
 export default (state = initialState, { type, payload }) => {
   switch (type) {
     case HTTP_REGISTER_FETCHING:

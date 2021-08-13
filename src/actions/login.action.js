@@ -36,12 +36,13 @@ export const login = (history, credential) => {
     dispatch(setLoginStateToFetching());
     try {
       let resultBackend = await httpClient.post(server.LOGIN_URL, credential);
-      if (resultBackend.data.message === OK) {
+      if (resultBackend.data.api_result === OK) {
         localStorage.setItem(key.LOGIN_PASSED, YES);
         localStorage.setItem(key.USER_NAME, resultBackend.data.result.username);
         localStorage.setItem(key.USER_EMP, resultBackend.data.result.empNumber);
         localStorage.setItem(key.API_KEY, resultBackend.data.result.randomKey);
         localStorage.setItem(key.USER_LV, resultBackend.data.result.levelUser);
+        localStorage.setItem(key.TOKEN , resultBackend.data.token)
         getState().appReducer.app.forceUpdate();
 
         dispatch(setLoginStateToSuccess(resultBackend));

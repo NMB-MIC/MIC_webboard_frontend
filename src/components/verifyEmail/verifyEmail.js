@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { httpClient } from "./../../utils/HttpClient";
 
-
 const ReactSwal = withReactContent(Swal);
 
 class VerifyEmail extends Component {
@@ -14,7 +13,7 @@ class VerifyEmail extends Component {
 
     this.state = {
       username: null,
-      randomKey: null,
+      registerKey: null,
     };
   }
 
@@ -22,23 +21,25 @@ class VerifyEmail extends Component {
     document.title = APP_TITLE + " Verify email";
 
     let username = this.props.match.params.username;
-    let randomKey = this.props.match.params.randomKey;
-
-    await this.setState({ username, randomKey });
+    let registerKey = this.props.match.params.registerKey;
+    console.log(username);
+    console.log(registerKey);
+    await this.setState({ username, registerKey });
     this.isMember();
-    this.verifyEmail();
+    this.verifyUserEmail();
 
-    //alert(username + "./" + randomKey)
+    //alert(username + "./" + registerKey)
   }
 
-  verifyEmail = async () => {
-    if (this.state.username != null && this.state.randomKey != null) {
+  verifyUserEmail = async () => {
+    console.log('verrify');
+    if (this.state.username != null && this.state.registerKey != null) {
       let result = await httpClient.get(
         server.VERIFY_EMAIL_URL +
-          `/${this.state.username}&${this.state.randomKey}`
+          `/${this.state.username}&${this.state.registerKey}`
       );
-      
-      if (result.data.message === OK) {
+
+      if (result.data.api_result === OK) {
         ReactSwal.fire({
           title: "OK...",
           html: "Your email has been verified <p>Please login</p>",

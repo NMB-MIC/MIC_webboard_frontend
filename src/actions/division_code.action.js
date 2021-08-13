@@ -29,7 +29,7 @@ const doGetDivCode = (dispatch) => {
       dispatch(setDivCodestateToSuccess(result.data));
     })
     .catch((error) => {
-      alert(error);
+      // alert(error);
       dispatch(setDivCodestateToFailed());
     });
 };
@@ -66,7 +66,7 @@ export const createDivCode = (history, divisionCodeData) => {
         server.DIVISIONCODE_URL,
         divisionCodeData
       );
-      if (resultBackend.data.message === OK) {
+      if (resultBackend.data.api_result === OK) {
         dispatch(setDivCodestateToSuccess(resultBackend.data.result));
         history.goBack();
       } else {

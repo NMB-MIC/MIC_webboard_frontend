@@ -1,6 +1,7 @@
 import axios from 'axios'
 import join from 'url-join'
 import { apiUrl, NOT_CONNECT_NETWORK, NETWORK_CONNECTION_MESSAGE} from '../constants'
+import { key} from '../constants'
 
 const isAbsoluteURLRegex = /^(?:\w+:)\/\//
 
@@ -8,6 +9,10 @@ axios.interceptors.request.use(async (config) => {
     if (!isAbsoluteURLRegex.test(config.url)) {
         config.url = join(apiUrl, config.url) 
     }
+    const jwtToken = await localStorage.getItem(key.TOKEN)
+        if (jwtToken != null) {
+            config.headers = { 'x-access-token': jwtToken }
+        }
     config.timeout = 10000 // 10 Second 
     return config
 })

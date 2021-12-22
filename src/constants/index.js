@@ -53,7 +53,8 @@ export const UPLOAD_PHOTO_FAIL_MESSAGE =
   "An error has occurred. The photo was unable to upload.";
 
 // export const apiUrl = "http://10.121.1.123:9001/api/mic_jobProgressive/";
-export const apiUrl = "http://localhost:9001/api/mic_jobProgressive/";
+export const apiUrl = "http://10.120.10.140:5001/api/mic_jobProgressive/";
+// export const apiUrl = "http://localhost:9001/api/mic_jobProgressive/";
 
 
 export const YES = "YES";
@@ -74,10 +75,13 @@ export const server = {
   MIC_JOB_URL: 'Jobs/mic_job',
   MIC_JOB_APPROVED_URL: 'Jobs/mic_job_approve',
   P_CHART_URL:'qc_control_chart/dynamic_pchart',
+  X_bar_r_chart_URL: `qc_control_chart/X_bar_r_chart`,
+  Warning_Status_URL: `qc_control_chart/warningStatus`,
   JOB_PROCESS_URL:'manage_master/jobs_process_master',
   JOB_SCORE_URL:'Jobs/job_score',
   JOB_PROGRESSIVE_URL:'JobProgressive/jobProgressive',
   AllianceWebsite_URL: 'alliance_website/allianceWebsite',
+  
 };
 
 export const key = {

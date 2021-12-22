@@ -180,6 +180,19 @@ class Menu extends Component {
               <p>P-chart</p>
             </Link>
           </li>
+          <li className="nav-item">
+            <Link
+              to="/qc_tools/x_bar_r_chart/"
+              className={
+                pathname === "/qc_tools/x_bar_r_chart/"
+                  ? "nav-link active"
+                  : "nav-link"
+              }
+            >
+              <i className="far fa-circle nav-icon" />
+              <p>x_bar_r_chart</p>
+            </Link>
+          </li>
         </ul>
       </li>
     )

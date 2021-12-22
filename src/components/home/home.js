@@ -157,7 +157,6 @@ class home extends Component {
       },
       {
         title: 'Create alliance website (2)',
-        input: 'url',
         text: 'Enter website address (Ex. http://10.121.1.123:8000/)'
       },
       {
@@ -272,7 +271,7 @@ class home extends Component {
                     </div>
                     <div className="card-body">
                       <div style={{ textAlign: 'left', }}>
-                        <p>Request MIC team to help or consault your job/project.</p>
+                        <p>Request MIC team to help or consult your job/project.</p>
                         <p >
                           <Link to={'/mic_jobs/jobs_request'}>
                             {`See more ${this.state.countOpen} items ...`}

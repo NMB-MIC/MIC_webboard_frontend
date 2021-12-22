@@ -8,7 +8,7 @@ export default function Footer() {
       </strong>
       &nbsp; All rights reserved.
       <div className="float-right d-none d-sm-inline-block">
-        <b>Version</b> 1.1.0
+        <b>Version</b> 1.1.1
       </div>
     </footer>
   );

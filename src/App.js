@@ -24,6 +24,7 @@ import editJobDetail from './components/mic_jobs/editJobDetail';
 
 //qc tools
 import p_chart from './components/qc_tools/p_chart'
+import x_bar_r_chart from './components/qc_tools/x_bar_r_chart';
 
 import { APP_TITLE } from "./constants/index";
 
@@ -155,6 +156,7 @@ class App extends Component {
               path="/qc_tools/p_chart/"
               component={p_chart}
             />
+            <SecuredRoute path="/qc_tools/x_bar_r_chart/" component={x_bar_r_chart} />
 
             <Route exact={true} path="/" component={this.redirectToLogin} />
             <Route exact={true} path="*" component={this.redirectToLogin} />
